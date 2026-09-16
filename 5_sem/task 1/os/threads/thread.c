@@ -12,7 +12,7 @@ void *mythread(void *arg) {
 }
 
 int main() {
-	pthread_t tid;
+	pthread_t tid; //posix thread id
 	int err;
 
 	printf("main [%d %d %d]: Hello from main!\n", getpid(), getppid(), gettid());

@@ -16,7 +16,7 @@ void *mythread(void *arg) {
     static int static_var = 2;
     const int const_var = 3;
 
-    printf("\nTHREAD %d\n", number);
+    printf("\n Hello from thread %d\n", number);
 
     printf("pid: %d\n", getpid());
     printf("ppid: %d\n", getppid());

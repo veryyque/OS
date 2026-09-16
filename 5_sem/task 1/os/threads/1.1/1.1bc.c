@@ -8,15 +8,15 @@
 #include <unistd.h>
 
 int global_var = 67;
-pthread_t tids[5];
+pthread_t tids[5]; // POSIX ids
 
 void *mythread(void *arg) {
-    int number = *(int *)arg;
+    int number = *(int *)arg; //номер потока
     int local_var = 1;
     static int static_var = 2;
     const int const_var = 3;
 
-    printf("\nTHREAD %d\n", number);
+    printf("\n Hello from thread %d\n", number);
 
     printf("pid: %d\n", getpid());
     printf("ppid: %d\n", getppid());
@@ -43,8 +43,7 @@ int main() {
 
     for (int i = 0; i < 5; i++) {
         numbers[i] = i;
-        err = pthread_create(&tids[i], NULL, mythread, &numbers[i]
-        );
+        err = pthread_create(&tids[i], NULL, mythread, &numbers[i]);
 
         if (err) {
             printf("pthread_create() failed: %s\n", strerror(err));
