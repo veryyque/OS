@@ -20,13 +20,37 @@ int main() {
     pthread_t tid;
     pthread_attr_t attr;
     struct Data *data = malloc(sizeof(struct Data));
-    data->number = 42;
+    if (data == NULL) {
+        perror("malloc");
+        return 1;
+    }
+
+    data->number = 67;
     data->text = "hello";
 
-    pthread_attr_init(&attr);
-    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-    pthread_create(&tid, &attr, mythread, data);
-    pthread_attr_destroy(&attr);
+    if (pthread_attr_init(&attr) != 0) {
+        perror("pthread_attr_init");
+        free(data);
+        return 1;
+    }
+
+    if (pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED) != 0) {
+        perror("pthread_attr_setdetachstate");
+        pthread_attr_destroy(&attr);
+        free(data);
+        return 1;
+    }
+
+    if (pthread_create(&tid, &attr, mythread, data) != 0) {
+        perror("pthread_create");
+        pthread_attr_destroy(&attr);
+        free(data);
+        return 1;
+    }
+
+    if (pthread_attr_destroy(&attr) != 0) {
+        perror("pthread_attr_destroy");
+    }
 
     pthread_exit(NULL);
 }

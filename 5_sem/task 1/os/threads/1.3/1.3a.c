@@ -16,9 +16,17 @@ void *mythread(void *arg) {
 int main() {
     pthread_t tid;
     struct Data data;
-    data.number = 42;
+    data.number = 67;
     data.text = "hello";
-    pthread_create(&tid, NULL, mythread, &data);
-    pthread_join(tid, NULL);
+    if (pthread_create(&tid, NULL, mythread, &data) != 0) {
+        perror("pthread_create");
+        return 1;
+    }
+
+    if (pthread_join(tid, NULL) != 0) {
+        perror("pthread_join");
+        return 1;
+    }
+
     return 0;
 }

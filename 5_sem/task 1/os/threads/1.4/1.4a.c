@@ -11,9 +11,27 @@ void *mythread(void *arg) {
 
 int main() {
     pthread_t tid;
-    pthread_create(&tid, NULL, mythread, NULL);
-    pthread_cancel(tid);
-    pthread_join(tid, NULL);
-    printf("worker was cancelled\n");
+    void *result;
+    
+    if (pthread_create(&tid, NULL, mythread, NULL) != 0) {
+        printf("pthread_create failed\n");
+        return 1;
+    }
+
+    sleep(1);
+
+    if (pthread_cancel(tid) != 0) {
+        printf("pthread_cancel failed\n");
+        return 1;
+    }
+
+    if (pthread_join(tid, &result) != 0) {
+        printf("pthread_join failed\n");
+        return 1;
+    }
+
+    if (result == PTHREAD_CANCELED) {
+        printf("worker was cancelled\n");
+    }
     return 0;
 }

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <pthread.h>
+#include <string.h>
 
 int num = 42;
 
@@ -12,7 +13,12 @@ void *mythread(void *arg) {
 int main() {
     pthread_t tid;
     void *result;
-    pthread_create(&tid, NULL, mythread, NULL);
+    int err = pthread_create(&tid, NULL, mythread, NULL);
+
+    if (err != 0) {
+        printf("pthread_create failed: %s\n", strerror(err));
+        return 1;
+    }
     pthread_join(tid, &result);
     printf("%d \n",*(int *)result);
     printf("main thread finished\n");
