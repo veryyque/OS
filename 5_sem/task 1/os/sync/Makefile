@@ -1,22 +1,18 @@
-TARGET_1 = queue-example
-SRCS_1 = queue.c queue-example.c
+CC = gcc
+CFLAGS = -g -Wall
+LDLIBS = -pthread
 
-TARGET_2 = queue-threads
-SRCS_2 = queue.c queue-threads.c
+EXPERIMENTS = queue-1000 queue-10000 queue-100000 queue-1000000 \
+              queue-different-cpu queue-no-yield
+TARGETS = queue-example queue-threads $(EXPERIMENTS)
 
-CC=gcc
-RM=rm
-CFLAGS= -g -Wall
-LIBS=-lpthread
-INCLUDE_DIR="."
+.PHONY: all experiments clean
+all: $(TARGETS)
 
-all: ${TARGET_1} ${TARGET_2}
+experiments: $(EXPERIMENTS)
 
-${TARGET_1}: queue.h ${SRCS_1}
-	${CC} ${CFLAGS} -I${INCLUDE_DIR} ${SRCS_1} ${LIBS} -o ${TARGET_1}
-
-${TARGET_2}: queue.h ${SRCS_2}
-	${CC} ${CFLAGS} -I${INCLUDE_DIR} ${SRCS_2} ${LIBS} -o ${TARGET_2}
+$(TARGETS): %: %.c queue.c queue.h
+	$(CC) $(CFLAGS) -pthread -I. queue.c $< $(LDLIBS) -o $@
 
 clean:
-	${RM} -f *.o ${TARGET_1} ${TARGET_2}
+	rm -f *.o $(TARGETS)

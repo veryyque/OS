@@ -47,7 +47,7 @@ int uthread_create(uthread_t *thread, void *(*start_routine)(void *), void *arg)
 
     thread->context.uc_stack.ss_sp = thread->stack; //задание стека пользовательского потока
     thread->context.uc_stack.ss_size = STACK_SIZE; 
-    thread->context.uc_link = NULL; //куда перейти функции после завершения
+    thread->context.uc_link = &thread->main_context; //куда перейти функции после завершения
     thread->finished = 0;
     makecontext(&thread->context,(void (*)(void))thread_start,1,info);
 
@@ -63,11 +63,10 @@ int uthread_run(uthread_t *thread) {
     if (thread->finished) {
         return 0;
     }
-    ucontext_t main_context;
-    thread->context.uc_link = &main_context; //при завершении функции потока переходим в мейн
-    if (swapcontext(&main_context, &thread->context) == -1) { //сохраняю состояние мейн потока и перехожу в контекст пользовательского потока
-        return -1;
-    }
+     //при завершении функции потока переходим в мейн, сохраняю состояние мейн потока и перехожу в контекст пользовательского потока
+    if (swapcontext(&thread->main_context, &thread->context) == -1) {
+    return -1;
+}
 
     free(thread->stack);
     thread->stack = NULL;

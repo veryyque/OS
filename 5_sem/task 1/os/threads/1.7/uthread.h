@@ -7,6 +7,7 @@
 
 typedef struct {
     ucontext_t context;
+    ucontext_t main_context;
     void *stack;
     int finished;
 } uthread_t;
