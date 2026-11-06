@@ -78,6 +78,12 @@ void queue_destroy(queue_t *q) {
 }
 
 int queue_add(queue_t *q, int val) {
+	qnode_t *new = malloc(sizeof(qnode_t));
+	if (!new) {
+		printf("Cannot allocate memory for new node\n");
+		abort();
+	}
+
 	pthread_spin_lock(&q->lock);
 	q->add_attempts++;
 
@@ -85,13 +91,8 @@ int queue_add(queue_t *q, int val) {
 
 	if (q->count == q->max_count) {
 		pthread_spin_unlock(&q->lock);
+		free(new);
 		return 0;
-	}
-
-	qnode_t *new = malloc(sizeof(qnode_t));
-	if (!new) {
-		printf("Cannot allocate memory for new node\n");
-		abort();
 	}
 
 	new->val = val;

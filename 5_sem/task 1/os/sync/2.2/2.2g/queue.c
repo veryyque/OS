@@ -92,6 +92,12 @@ void queue_destroy(queue_t *q) {
 }
 
 int queue_add(queue_t *q, int val) {
+	qnode_t *new = malloc(sizeof(qnode_t));
+	if (!new) {
+		printf("Cannot allocate memory for new node\n");
+		abort();
+	}
+
 	wait_sem(&q->lock);
 	q->add_attempts++;
 	sem_post(&q->lock);
@@ -101,12 +107,6 @@ int queue_add(queue_t *q, int val) {
 	assert(q->count <= q->max_count);
 
 	assert(q->count < q->max_count);
-
-	qnode_t *new = malloc(sizeof(qnode_t));
-	if (!new) {
-		printf("Cannot allocate memory for new node\n");
-		abort();
-	}
 
 	new->val = val;
 	new->next = NULL;

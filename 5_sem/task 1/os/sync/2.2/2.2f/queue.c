@@ -90,6 +90,12 @@ void queue_destroy(queue_t *q) {
 }
 
 int queue_add(queue_t *q, int val) {
+	qnode_t *new = malloc(sizeof(qnode_t));
+	if (!new) {
+		printf("Cannot allocate memory for new node\n");
+		abort();
+	}
+
 	pthread_mutex_lock(&q->mutex);
 	q->add_attempts++;
 
@@ -97,12 +103,6 @@ int queue_add(queue_t *q, int val) {
 
 	while (q->count == q->max_count)
 		pthread_cond_wait(&q->not_full, &q->mutex);
-
-	qnode_t *new = malloc(sizeof(qnode_t));
-	if (!new) {
-		printf("Cannot allocate memory for new node\n");
-		abort();
-	}
 
 	new->val = val;
 	new->next = NULL;
