@@ -162,8 +162,5 @@ void queue_print_stats(queue_t *q) {
 	long get_count = q->get_count;
 	sem_post(&q->lock);
 
-	printf("queue stats: current size %d; attempts: (%ld %ld %ld); counts (%ld %ld %ld)\n",
-		count,
-		add_attempts, get_attempts, add_attempts - get_attempts,
-		add_count, get_count, add_count - get_count);
+	printf("queue stats: current size %d; attempts: (%ld %ld %ld); counts (%ld %ld %ld)\n",count, add_attempts, get_attempts, add_attempts - get_attempts, add_count, get_count, add_count - get_count);
 }
