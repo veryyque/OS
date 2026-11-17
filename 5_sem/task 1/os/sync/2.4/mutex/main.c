@@ -40,7 +40,6 @@ int main(void) {
     custom_mutex_destroy(&mutex);
 
     long long expected = (long long)THREADS * REPEATS;
-    printf("mutex: counter=%lld, expected=%lld: %s\n",
-           counter, expected, counter == expected ? "OK" : "ERROR");
+    printf("mutex: counter=%lld, expected=%lld: %s\n", counter, expected, counter == expected ? "OK" : "ERROR");
     return 0;
 }
