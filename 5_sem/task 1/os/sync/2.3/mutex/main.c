@@ -25,7 +25,8 @@ int main(int argc, char **argv) {
     }
     atomic_store(&stop, 1);
     for (int i = 0; i < 3; i++) {
-        check(pthread_join(readers[i], NULL)); check(pthread_join(writers[i], NULL));
+        check(pthread_join(readers[i], NULL)); 
+        check(pthread_join(writers[i], NULL));
     }
     if (queue_destroy(n)) return 1;
     printf("OK: %d nodes remain\n", n);

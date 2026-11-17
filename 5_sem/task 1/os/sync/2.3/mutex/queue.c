@@ -10,11 +10,16 @@ atomic_int stop;
 atomic_ulong iterations[3], pairs[3], swaps[3];
 
 void check(int err) {
-    if (err) { fprintf(stderr, "%s\n", strerror(err)); exit(1); }
+    if (err) {
+        fprintf(stderr, "%s\n", strerror(err)); exit(1);
+    }
 }
+
 Node *new_node(void) {
     Node *n = calloc(1, sizeof(*n));
-    if (!n) { perror("calloc"); exit(1); }
+    if (!n) {
+        perror("calloc"); exit(1);
+    }
     check(pthread_mutex_init(&n->sync, NULL));
     return n;
 }
@@ -30,8 +35,7 @@ void *reader(void *arg) {
             check(pthread_mutex_lock(&b->sync));
             if (a != storage.first) {
                 size_t x = strlen(a->value), y = strlen(b->value);
-                if ((id == 0 && x < y) || (id == 1 && x > y) ||
-                    (id == 2 && x == y)) found++;
+                if ((id == 0 && x < y) || (id == 1 && x > y) || (id == 2 && x == y)) found++;
             }
             check(pthread_mutex_unlock(&a->sync));
             a = b;  
@@ -54,9 +58,9 @@ void *writer(void *arg) {
             check(pthread_mutex_lock(&a->sync));
             Node *b = a->next;
             if (!b) { check(pthread_mutex_unlock(&a->sync)); break; }
-            check(pthread_mutex_lock(&b->sync));
+            check(pthread_mutex_lock(&b->sync)); //захват prev a b
              
-            if (rand_r(&seed) % 2) {
+            if (rand_r(&seed) % 2) { //случайно выбираю делать или нет перестановку
                 prev->next = b;
                 a->next = b->next;
                 b->next = a;
@@ -70,15 +74,15 @@ void *writer(void *arg) {
                 prev = a;
             }
         }
-        check(pthread_mutex_unlock(&prev->sync));
+        check(pthread_mutex_unlock(&prev->sync)); //продолжаю с узла a, b
     }
     return NULL;
 }
 
 void queue_init(int n) {
-    storage.first = new_node();
+    storage.first = new_node(); //создаю служебный начальный узел
     Node *tail = storage.first;
-    unsigned seed = 42;
+    unsigned seed = 67; 
     for (int i = 0; i < n; i++) {
         tail->next = new_node(); tail = tail->next;
         int len = 1 + rand_r(&seed) % 99;
@@ -87,7 +91,6 @@ void queue_init(int n) {
 }
 
 int queue_destroy(int expected) {
-     
     int count = 0;
     Node *p = storage.first->next;
     while (p && count <= expected) { count++; p = p->next; }
