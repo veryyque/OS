@@ -17,7 +17,7 @@ void custom_mutex_init(custom_mutex_t *mutex) {
 
 int custom_mutex_lock(custom_mutex_t *mutex) {
     while (!__sync_bool_compare_and_swap(&mutex->lock, 0, 1)) {
-        long result = futex(&mutex->lock, FUTEX_WAIT, 1);
+        long result = futex(&mutex->lock, FUTEX_WAIT, 1); //проверка если address = 1(value), поставить поток в ожидание
         if (result == -1 && errno != EAGAIN && errno != EINTR) {
             perror("futex wait");
             exit(EXIT_FAILURE);
@@ -28,7 +28,7 @@ int custom_mutex_lock(custom_mutex_t *mutex) {
 
 int custom_mutex_unlock(custom_mutex_t *mutex) {
     __atomic_store_n(&mutex->lock, 0, __ATOMIC_RELEASE);
-    if (futex(&mutex->lock, FUTEX_WAKE, 1) == -1) {
+    if (futex(&mutex->lock, FUTEX_WAKE, 1) == -1) { //разбудить 1!!!! поток
         perror("futex wake");
         exit(EXIT_FAILURE);
     }
