@@ -78,7 +78,7 @@ void *writer(void *arg) {
 void queue_init(int n) {
     storage.first = new_node();
     Node *tail = storage.first;
-    unsigned seed = 42;
+    unsigned seed = 67;
     for (int i = 0; i < n; i++) {
         tail->next = new_node(); tail = tail->next;
         int len = 1 + rand_r(&seed) % 99;

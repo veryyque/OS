@@ -45,7 +45,7 @@ void *reader(void *arg) {
 
 void *writer(void *arg) {
     int id = *(int *)arg;
-    unsigned seed = 1234 + id;
+    unsigned seed = 67 + id;
     while (!atomic_load(&stop)) {
         Node *prev = storage.first;
         check(pthread_spin_lock(&prev->sync));
